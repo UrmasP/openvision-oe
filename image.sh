@@ -12,7 +12,20 @@ then
 else
     echo -e "${RED}We only support Ubuntu 18.04.x LTS!${NC}"
     echo -e ""
-    exit 0
+    sleep 3
+        if [ -f /etc/debian_version ]; then
+        echo -e "${NC}You can use also Debian, but it's at your own risk."
+        echo -e ""
+        sleep 3
+        read -r -p"Press enter to continue " variable;echo
+        echo -e "${NC}You have Debian version:";cat /etc/debian_version
+        printf '-'
+        printf '-'
+        printf '-'
+        echo -e ""
+        else
+            exit 0
+        fi
 fi
 VISIONVERSION=`cat meta-openvision/conf/distro/openvision-common.conf | grep -oP '(?<=VISIONVERSION = ")[0-9].[0-9]*'`
 VISIONREVISION=`cat meta-openvision/conf/distro/revision.conf | grep -oP '(?<=VISIONREVISION = "r)[0-9]*'`
@@ -30,14 +43,27 @@ fi
 echo -e ""
 echo -e "${YELLOW}Notice: this script is case sensitive!${NC}"
 echo -e ""
-echo -e "First we need to check your Ubuntu 18.04.x"
-echo -e ""
-if [ -f user.ovstep ]; then
-	echo -e "Seems you run ltsubuntu.sh before but keep in mind it's better to run it each month to get latest updates."
+if [ -f /etc/debian_version ]; then
+	echo -e "D E B I A N"
 	echo -e ""
 else
+	echo -e "First we need to check your Ubuntu 18.04.x"
+	echo -e ""
+fi
+if [ -f user.ovstep ]; then
+        if [ -f /etc/debian_version ]; then
+        sleep 1
+        else
+	echo -e "Seems you run ltsubuntu.sh before but keep in mind it's better to run it each month to get latest updates."
+	echo -e ""
+	fi
+else
 	echo -e "Oh, we need to setup your Ubuntu so you need internet connection and a cup of coffee."
+	if [ -f /etc/debian_version ]; then
+	echo -e "For Debian's you can continue at your own risk. We're going past from the checking Debian's update, upgrade, installed stuff, etc."
+	else
 	/bin/sh ltsubuntu.sh
+	fi
 	echo "once" > user.ovstep
 fi
 DEVELOPERNAME=`git config user.name`
